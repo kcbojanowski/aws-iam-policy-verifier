@@ -1,4 +1,4 @@
-module github.com/kcbojanowski/remitly-json-verifier
+module github.com/kcbojanowski/aws-iam-policy-verifier
 
 go 1.22.2
 

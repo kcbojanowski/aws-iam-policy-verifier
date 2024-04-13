@@ -1,41 +1,20 @@
 package verifier
 
 import (
-    "encoding/json"
+    "github.com/kcbojanowski/aws-iam-policy-verifier/pkg/verifier/format"
+    "github.com/kcbojanowski/aws-iam-policy-verifier/pkg/verifier/resource"
 )
 
-// structure of the AWS IAM Policy 
-type PolicyDocument struct {
-    Version   string      `json:"Version"`
-    Statement []Statement `json:"Statement"`
-}
-
-type Statement struct {
-    Sid      string   `json:"Sid"`
-    Effect   string   `json:"Effect"`
-    Action   []string `json:"Action"`
-    Resource string   `json:"Resource"`
-}
-
-type IAMPolicy struct {
-    PolicyName     string         `json:"PolicyName"`
-    PolicyDocument PolicyDocument `json:"PolicyDocument"`
-}
-
-
-func VerifyPolicyJSON(policyJSON []byte) (bool, error) {
-    var policy IAMPolicy
-
-    err := json.Unmarshal(policyJSON, &policy)
+func ValidatePolicyJson(policyJson []byte) (bool, error) {
+    policy, err := format.ValidateFormat(policyJson)
     if err != nil {
         return false, err
     }
 
-    for _, statement := range policy.PolicyDocument.Statement {
-        if statement.Resource == "*" {
-            return false, nil
-        }
+    validResource, err := resource.ValidateResource(policy)
+    if err != nil {
+        return false, err
     }
 
-    return true, nil
+    return validResource, nil
 }

@@ -7,7 +7,7 @@ import (
     "path/filepath"
     "strings"
     "github.com/manifoldco/promptui"
-    "github.com/kcbojanowski/remitly-json-verifier/pkg/verifier"
+    "github.com/kcbojanowski/aws-iam-policy-verifier/pkg/verifier"
 )
 
 func main() {
