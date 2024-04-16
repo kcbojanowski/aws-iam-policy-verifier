@@ -41,7 +41,7 @@ func main() {
                     continue
                 }
 
-                valid, err := verifier.VerifyPolicyJSON(testJSON)
+                valid, err := verifier.VerifyPolicyJson(testJSON)
                 if err != nil {
                     fmt.Printf("Error verifying %s: %s ❌\n", f.Name(), err)
                 } else if valid {
@@ -49,7 +49,7 @@ func main() {
                 } else {
                     fmt.Printf("%s is not valid. ❌\n", f.Name())
                 }
-                fmt.Println("\n")
+                fmt.Println()
             }
         }
 
@@ -70,7 +70,7 @@ func main() {
             return
         }
 
-        valid, err := verifier.VerifyPolicyJSON(jsonBytes)
+        valid, err := verifier.VerifyPolicyJson(jsonBytes)
         if err != nil {
             fmt.Printf("Error verifying JSON: %s ❌\n", err)
         } else if valid {
