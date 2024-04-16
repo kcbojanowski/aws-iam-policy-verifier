@@ -1,0 +1,18 @@
+{
+  "PolicyName": "ConditionalPolicy",
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statements": [
+      {
+        "Effect": "Allow",
+        "Action": ["dynamodb:PutItem", "dynamodb:GetItem"],
+        "Resource": ["arn:aws:dynamodb:::table/MyTable"],
+        "Conditions": {
+          "StringEquals": {
+            "dynamodb:LeadingKeys": ["UserId"]
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "PolicyName": "ExamplePolicy",
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statements": [
+      {
+        "Effect": "Allow",
+        "Action": [],
+        "Resource": ["arn:aws:s3:::examplebucket/*"]
+      }
+    ]
+  }
+}

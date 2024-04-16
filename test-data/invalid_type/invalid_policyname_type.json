@@ -1,0 +1,7 @@
+{
+  "PolicyName": 123,
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statements": []
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "PolicyName": "ComprehensiveAccessPolicy",
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statements": [
+      {
+        "Effect": "Allow",
+        "Action": ["s3:*"],
+        "Resource": ["arn:aws:s3:::examplebucket/*"],
+        "Principal": {
+          "AWS": ["arn:aws:iam::123456789012:user/Alice"]
+        }
+      }
+    ]
+  }
+}

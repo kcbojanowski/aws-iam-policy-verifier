@@ -1,0 +1,15 @@
+{
+  "result": [
+    {
+      "status": "disabled",
+      "name": {
+        "first": "Hazel",
+        "middle": "Reign",
+        "last": "Okuneva"
+      },
+      "username": "Hazel-Okuneva",
+      "password": "94KsYvVMtn1Ohl2",
+      "emails": ["Cayla56@gmail.com", "Lisa29@example.com"]
+    }
+  ]
+}

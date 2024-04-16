@@ -1,0 +1,13 @@
+{
+  "PolicyName": "ExamplePolicy",
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statements": [
+      {
+        "Effect": 1234,
+        "Action": ["s3:GetObject"],
+        "Resource": ["arn:aws:s3:::examplebucket/*"]
+      }
+    ]
+  }
+}

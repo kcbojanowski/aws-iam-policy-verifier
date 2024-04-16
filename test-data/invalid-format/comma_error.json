@@ -1,0 +1,12 @@
+{
+    "PolicyName": "ExamplePolicy",
+    "PolicyDocument": {
+        "Version": "2012-10-17"
+        "Statements": [
+            {
+                "Effect": "Allow",
+                "Action": ["s3:GetObject"],
+            }
+        ]
+    }
+}

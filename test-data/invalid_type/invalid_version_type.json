@@ -1,0 +1,7 @@
+{
+  "PolicyName": "ExamplePolicy",
+  "PolicyDocument": {
+    "Version": false,
+    "Statements": []
+  }
+}
