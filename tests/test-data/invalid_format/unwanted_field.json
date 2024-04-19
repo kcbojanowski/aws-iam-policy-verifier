@@ -1,0 +1,19 @@
+{
+  "PolicyName": "MultiStatementPolicy",
+  "password": "password",
+  "PolicyDocument": {
+    "Version": "2012-10-17",
+    "Statements": [
+      {
+        "Effect": "Allow",
+        "Action": ["ec2:StartInstances", "ec2:StopInstances"],
+        "Resource": ["arn:aws:ec2:::instance/*"]
+      },
+      {
+        "Effect": "Deny",
+        "Action": ["ec2:TerminateInstances"],
+        "Resource": ["arn:aws:ec2:::instance/*"]
+      }
+    ]
+  }
+}

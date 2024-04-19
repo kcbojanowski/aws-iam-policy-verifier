@@ -13,5 +13,5 @@ To build and run the JSON verifier, follow these steps:
 3. Build the project
 `go build ./cmd/main.go`
 
-to be continued...
+Format validator based on: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html
 
