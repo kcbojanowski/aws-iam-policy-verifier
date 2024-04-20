@@ -17,13 +17,12 @@ var errorMessages = map[string]string{
 	"invalidActionFormat": "Invalid action format: each action must include a colon, like 'service:action'",
 	"invalidActionType":   "Actions must be a string or a slice of strings",
 
-	"bothResource":        "There can be only one of Resource or NotResource",
 	"emptyResource":       "At least one Resource or NotResource is required",
+	"bothResource":        "There can be only one of Resource or NotResource",
 	"invalidResourceType": "Resource must be a string or a slice of strings",
 	"wildcardResource":    "Resource is a wildcard",
 
-	"emptyStatement":       "At least one Statement is required",
-	"invalidStatementType": "Statements must be a slice of Statement structs",
+	"emptyStatement": "At least one Statement is required",
 }
 
 func GetErrorMessage(key string) string {
