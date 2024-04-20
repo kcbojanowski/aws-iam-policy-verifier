@@ -25,7 +25,11 @@ func ValidateIAMPolicy(policy IAMPolicy) error {
 		return err
 	}
 
-	for _, statement := range policy.PolicyDocument.Statements {
+	if len(policy.PolicyDocument.Statement) == 0 || policy.PolicyDocument.Statement == nil {
+		return fmt.Errorf(errorMessages["emptyStatement"])
+	}
+
+	for _, statement := range policy.PolicyDocument.Statement {
 		if _, err := ValidateStatement(statement); err != nil {
 			return err
 		}
@@ -36,31 +40,32 @@ func ValidateIAMPolicy(policy IAMPolicy) error {
 
 func ValidatePolicyName(name string) (bool, error) {
 	if name == "" {
-		return false, fmt.Errorf(errorMessages["emptyPolicyName"])
-	}
+		return false, fmt.Errorf(errorMessages["emptyName"])
+	} else {
+		if reflect.TypeOf(name).Kind() != reflect.String {
+			return false, fmt.Errorf(errorMessages["invalidNameType"])
+		}
 
-	if reflect.TypeOf(name).Kind() != reflect.String {
-		return false, fmt.Errorf(errorMessages["invalidPolicyNameType"])
-	}
+		matched, err := regexp.MatchString(`^[\w+=,.@-]+$`, name)
+		if err != nil {
+			return false, fmt.Errorf("error while matching PolicyName: %v", err)
+		}
 
-	matched, err := regexp.MatchString(`^[\w+=,.@-]+$`, name)
-	if err != nil {
-		return false, fmt.Errorf("error while matching PolicyName: %v", err)
-	}
+		if !matched {
+			return false, fmt.Errorf(errorMessages["invalidNameFormat"])
+		}
 
-	if !matched {
-		return false, fmt.Errorf(errorMessages["invalidPolicyNameFormat"])
-	}
+		if len(name) > 128 {
+			return false, fmt.Errorf(errorMessages["invalidNameFormat"])
+		}
 
-	if len(name) > 128 {
-		return false, fmt.Errorf(errorMessages["invalidPolicyNameFormat"])
+		return true, nil
 	}
-	return true, nil
 }
 
 func ValidatePolicyDocument(policyDocument PolicyDocument) (bool, error) {
 	if policyDocument.Version == "" {
-		return false, fmt.Errorf(errorMessages["invalidPolicyNameFormat"])
+		return false, fmt.Errorf(errorMessages["emptyVersion"])
 	}
 
 	if result, err := ValidateVersion(policyDocument.Version); err != nil {
@@ -70,11 +75,15 @@ func ValidatePolicyDocument(policyDocument PolicyDocument) (bool, error) {
 }
 
 func ValidateVersion(version interface{}) (bool, error) {
+	versionStr, ok := version.(string)
+
+	if !ok || versionStr == "" {
+		return false, fmt.Errorf(errorMessages["emptyVersion"])
+	}
+
 	if reflect.TypeOf(version).Kind() != reflect.String {
 		return false, fmt.Errorf(errorMessages["invalidVersionType"])
 	}
-
-	versionStr := version.(string)
 
 	if versionStr != "2012-10-17" && versionStr != "2008-10-17" {
 		return false, fmt.Errorf(errorMessages["invalidVersionType"])
@@ -86,55 +95,71 @@ func ValidateStatement(statement Statement) (bool, error) {
 	if result, err := ValidateEffect(statement.Effect); err != nil {
 		return result, err
 	}
-	if len(statement.NotAction) > 0 && len(statement.Action) > 0 {
-		return false, fmt.Errorf(errorMessages["emptyActions"])
-	}
-	if len(statement.NotResource) > 0 && len(statement.Resource) > 0 {
-		return false, fmt.Errorf(errorMessages["emptyResource"])
-	}
-	if len(statement.NotAction) > 0 {
-		if result, err := ValidateActions(statement.NotAction); err != nil {
-			return result, err
-		}
-	} else {
-		if result, err := ValidateActions(statement.Action); err != nil {
-			return result, err
-		}
-	}
-	if len(statement.NotResource) > 0 {
-		if result, err := ValidateResources(statement.NotResource); err != nil {
-			return result, err
-		}
-	} else {
-		if result, err := ValidateResources(statement.Resource); err != nil {
-			return result, err
-		}
-	}
-	return true, nil
-}
 
-func ValidateEffect(effect string) (bool, error) {
-	if effect == "" {
-		return false, fmt.Errorf(errorMessages["emptyEffect"])
+	if (statement.Action != nil) && (statement.NotAction != nil) {
+		return false, fmt.Errorf(errorMessages["bothActions"])
 	}
-	if effect != "Allow" && effect != "Deny" {
-		return false, fmt.Errorf(errorMessages["invalidEffect"], effect)
+
+	if (statement.Resource != nil) && (statement.NotResource != nil) {
+		return false, fmt.Errorf(errorMessages["bothResources"])
 	}
+
+	if statement.Action != nil {
+		if result, err := ValidateActions(statement.Action); !result {
+			return result, err
+		}
+	}
+
+	if statement.NotAction != nil {
+		if result, err := ValidateActions(statement.NotAction); !result {
+			return result, err
+		}
+	}
+
+	if statement.Resource != nil {
+		if result, err := ValidateResources(statement.Resource); !result {
+			return result, err
+		}
+	}
+
+	if statement.NotResource != nil {
+		if result, err := ValidateResources(statement.NotResource); !result {
+			return result, err
+		}
+	}
+
 	return true, nil
 }
 
 func ValidateActions(actions interface{}) (bool, error) {
 	v := reflect.ValueOf(actions)
+	if !v.IsValid() {
+		return false, fmt.Errorf(errorMessages["emptyAction"])
+	}
 
-	if v.Kind() != reflect.Slice {
+	var actionsList []string
+	switch v.Kind() {
+	case reflect.String:
+		actionsList = append(actionsList, v.String())
+	case reflect.Slice:
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i)
+			if str, ok := item.Interface().(string); ok {
+				actionsList = append(actionsList, str)
+			} else {
+				return false, fmt.Errorf(errorMessages["invalidActionType"])
+			}
+		}
+	default:
 		return false, fmt.Errorf(errorMessages["invalidActionType"])
 	}
-	if v.Len() == 0 {
-		return false, fmt.Errorf(errorMessages["emptyActions"])
+
+	if len(actionsList) == 0 {
+		return false, fmt.Errorf(errorMessages["emptyAction"])
 	}
-	for i := 0; i < v.Len(); i++ {
-		action, ok := v.Index(i).Interface().(string)
-		if !ok || !strings.Contains(action, ":") {
+
+	for _, action := range actionsList {
+		if !strings.Contains(action, ":") {
 			return false, fmt.Errorf(errorMessages["invalidActionFormat"])
 		}
 	}
@@ -144,12 +169,49 @@ func ValidateActions(actions interface{}) (bool, error) {
 func ValidateResources(resources interface{}) (bool, error) {
 	v := reflect.ValueOf(resources)
 
-	if v.Kind() != reflect.Slice {
+	if !v.IsValid() {
 		return false, fmt.Errorf(errorMessages["invalidResourceType"])
 	}
-	if v.Len() == 0 {
-		return false, fmt.Errorf(errorMessages["emptyResources"])
+
+	switch v.Kind() {
+	case reflect.String:
+		str := v.String()
+		if str == "" {
+			return false, fmt.Errorf(errorMessages["emptyResource"])
+		}
+		if str == "*" {
+			return false, fmt.Errorf(errorMessages["wildcardResource"])
+		}
+	case reflect.Slice:
+		if v.Len() == 0 {
+			return false, fmt.Errorf(errorMessages["emptyResource"])
+		}
+		for i := 0; i < v.Len(); i++ {
+			item := v.Index(i)
+			if !item.CanInterface() {
+				return false, fmt.Errorf(errorMessages["invalidResourceFormat"])
+			}
+			str, ok := item.Interface().(string)
+			if !ok {
+				return false, fmt.Errorf(errorMessages["invalidResourceType"])
+			}
+			if str == "*" {
+				return false, fmt.Errorf(errorMessages["wildcardResource"])
+			}
+		}
+	default:
+		return false, fmt.Errorf(errorMessages["invalidResourceType"])
 	}
 
+	return true, nil
+}
+
+func ValidateEffect(effect string) (bool, error) {
+	if effect == "" {
+		return false, fmt.Errorf(errorMessages["emptyEffect"])
+	}
+	if effect != "Allow" && effect != "Deny" {
+		return false, fmt.Errorf(errorMessages["invalidEffect"])
+	}
 	return true, nil
 }

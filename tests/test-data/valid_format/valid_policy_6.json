@@ -1,0 +1,32 @@
+{
+  "PolicyName": "role-policy",
+  "PolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+            "Sid": "IamListAccessModified",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:GetUser"
+            ],
+            "Resource": "arn:aws:iam::123456789012:role/RoleName1"
+        },
+        {
+            "Sid": "SpecificRoleListAccess",
+            "Effect": "Allow",
+            "Action": "iam:GetRole",
+            "Resource": "arn:aws:iam::123456789012:role/RoleName2"
+        },
+        {
+            "Sid": "SNSTopicAccess",
+            "Effect": "Allow",
+            "Action": [
+                "sns:ListSubscriptions",
+                "sns:ListTopics"
+            ],
+            "Resource": "arn:aws:sns:us-east-1:123456789012:TopicName"
+        }
+      ]
+  }
+}

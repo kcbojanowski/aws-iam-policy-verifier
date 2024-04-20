@@ -2,6 +2,6 @@
   "PolicyName": "ExamplePolicy",
   "PolicyDocument": {
     "Version": "2012-10-17",
-    "Statements": []
+    "Statement": []
   }
 }

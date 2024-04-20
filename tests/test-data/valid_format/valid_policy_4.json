@@ -2,7 +2,7 @@
   "PolicyName": "NotActionsPolicy",
   "PolicyDocument": {
     "Version": "2012-10-17",
-    "Statements": [
+    "Statement": [
       {
         "Effect": "Deny",
         "NotAction": ["s3:ListBucket"],

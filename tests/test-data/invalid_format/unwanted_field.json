@@ -1,9 +1,9 @@
 {
   "PolicyName": "MultiStatementPolicy",
-  "password": "password",
+  "UnwantedField": "IShouldNotBeHere",
   "PolicyDocument": {
     "Version": "2012-10-17",
-    "Statements": [
+    "Statement": [
       {
         "Effect": "Allow",
         "Action": ["ec2:StartInstances", "ec2:StopInstances"],

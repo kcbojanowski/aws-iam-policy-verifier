@@ -25,7 +25,7 @@ func main() {
 
 	switch result {
 	case "Test with internal data":
-		testdataPath := "./test-data"
+		testdataPath := "./tests/test-data"
 		err := filepath.Walk(testdataPath, func(path string, info fs.FileInfo, err error) error {
 			if err != nil {
 				fmt.Println("Error accessing path:", path, "error:", err)
@@ -33,7 +33,10 @@ func main() {
 			}
 			if !info.IsDir() && strings.HasSuffix(info.Name(), ".json") {
 				fmt.Printf("\n--- Testing %s:\n", info.Name())
-				return validator.ValidatePolicyJson(path)
+				valid, err := validator.ValidatePolicyJson(path)
+				if err != nil || !valid {
+					fmt.Printf("Validation failed for %s: %s\n", path, err)
+				}
 			}
 			return nil
 		})
@@ -51,7 +54,8 @@ func main() {
 			fmt.Printf("Prompt failed %v\n", err)
 			return
 		}
-		if err := validateJSON(filePath); err != nil {
+		valid, err := validator.ValidatePolicyJson(filePath)
+		if err != nil || !valid {
 			fmt.Printf("Validation failed for %s: %s\n", filePath, err)
 		}
 	}
