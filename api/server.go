@@ -12,12 +12,6 @@ type PolicyResponse struct {
 	Error   string `json:"error,omitempty"`
 }
 
-func main() {
-	http.HandleFunc("/validate", ValidateIAMPolicyHandler)
-	log.Println("Server starting on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
 func ValidateIAMPolicyHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)

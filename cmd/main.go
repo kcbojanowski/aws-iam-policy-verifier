@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/kcbojanowski/aws-iam-policy-verifier/api"
 	"github.com/kcbojanowski/aws-iam-policy-verifier/pkg/validator"
 	"github.com/manifoldco/promptui"
 	"io/fs"
+	"net/http"
 	"path/filepath"
-
 	"strings"
 )
 
@@ -22,13 +23,15 @@ func main() {
 		validateInternalData("./tests/test_data")
 	case "Input your own JSON file":
 		validateUserFile()
+	case "Run Server":
+		runServer()
 	}
 }
 
 func selectMode() (string, error) {
 	prompt := promptui.Select{
 		Label: "Select Mode",
-		Items: []string{"Test with internal data", "Input your own JSON file"},
+		Items: []string{"Test with internal data", "Input your own JSON file", "Run Server"},
 	}
 	_, result, err := prompt.Run()
 	return result, err
@@ -69,5 +72,13 @@ func validateFile(filePath string) {
 		fmt.Printf("Validation failed for %s: %s\n", filePath, err)
 	} else {
 		fmt.Printf("Validation successful for %s\n", filePath)
+	}
+}
+
+func runServer() {
+	fmt.Println("Starting server on http://localhost:8080...")
+	http.HandleFunc("/validate", api.ValidateIAMPolicyHandler)
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		fmt.Printf("Failed to start server: %v\n", err)
 	}
 }

@@ -9,15 +9,15 @@ Before you can run the API, make sure you have Go (Golang) installed on your mac
 You can download and install Go from the [official website](https://golang.org/dl/).
 
 ### Running the API
-To run the API, follow these steps:
-1. Clone the repository:\
-`git clone https://github.com/kcbojanowski/remitly-json-verifier`
-2. Navigate to the cloned directory:\
-`cd aws-iam-policy-verifier/api`
-3. Build the project:\
-`go build github.com/kcbojanowski/aws-iam-policy-verifier/api`
-4. Run the project:\
-`./api`
+You can run you server using the CLI by running the following command:
+1. 
+```bash
+go build -o iam-json-verifier cmd/main.go
+```
+2. 
+```bash
+./iam-json-verifier
+```
 This will start the API server on http://localhost:8080
 
 ### Using the API

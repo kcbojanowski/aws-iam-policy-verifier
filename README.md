@@ -25,18 +25,29 @@ Test data also contains valid JSON Policy files to test the validator.
 
 ## How to Run
 
+### Requirements
+* Go (Golang) installed on your machine. You can download it from the official website: [https://golang.org/dl/](https://golang.org/dl/)
+
+### Steps
 To build and run the JSON verifier, follow these steps:
 
 1. Clone the repository:\
-`git clone https://github.com/kcbojanowski/remitly-json-verifier`
+`git clone https://github.com/kcbojanowski/aws-iam-policy-verifier`
 2. Navigate to cloned directory \
-`cd remitly-json-verifier`
+`cd aws-iam-policy-verifier`
 3. Build the project\
-`go build ./cmd/main.go`
+`go build -o iam-json-verifier cmd/main.go`
 4. Run the project
-`./main`
+`./iam-json-verifier`
+5. CLI should show up in the terminal.
+You can now navigate using arrows to:
+* validate you own JSON files,\
+![img.png](static/own_json.png)
+* test the project using internal data\
+![img.png](static/internal.png)
+* run the API\
+![img.png](static/server.png)
 
-To run web server follow the instructions in the dedicated README file in `api` directory.
 
 
 ## Resources:
@@ -46,7 +57,7 @@ The validation is based on **[Documentation provided by AWS](https://docs.aws.am
 To run tests, use the following command:
 `go test ./...`
 or test in in CLI using test data:\
-![img.png](static/internal_data.png)
+![img.png](static/internal.png)
 
 ## Self-Assessment
 - [x] Method verifying the input JSON data

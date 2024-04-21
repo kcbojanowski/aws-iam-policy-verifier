@@ -14,13 +14,13 @@ func ValidatePolicyJson(path string) (bool, error) {
 
 	policy, err := loadPolicyFromJSON(fileContent)
 	if err != nil {
-		fmt.Println("Invalid format of JSON ❌")
+		fmt.Println("Decoder: Invalid format of JSON ❌")
 		return false, err
 	}
 
 	err = ValidateIAMPolicy(policy)
 	if err != nil {
-		fmt.Println("Invalid IAM policy format ❌")
+		fmt.Println("Validator: Invalid IAM policy format ❌")
 		return false, err
 	}
 
