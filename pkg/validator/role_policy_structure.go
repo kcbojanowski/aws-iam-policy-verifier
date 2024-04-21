@@ -1,5 +1,12 @@
 package validator
 
+/*
+ More information about the IAMPolicy structure can be found here:
+ - https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html
+and more about the IAM Role Policy here:
+ - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-role-policy.html
+*/
+
 import (
 	"bytes"
 	"encoding/json"

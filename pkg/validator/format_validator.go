@@ -38,31 +38,6 @@ func ValidateIAMPolicy(policy IAMPolicy) error {
 	return nil
 }
 
-func ValidatePolicyName(name string) (bool, error) {
-	if name == "" {
-		return false, fmt.Errorf(errorMessages["emptyName"])
-	} else {
-		if reflect.TypeOf(name).Kind() != reflect.String {
-			return false, fmt.Errorf(errorMessages["invalidNameType"])
-		}
-
-		matched, err := regexp.MatchString(`^[\w+=,.@-]+$`, name)
-		if err != nil {
-			return false, fmt.Errorf("error while matching PolicyName: %v", err)
-		}
-
-		if !matched {
-			return false, fmt.Errorf(errorMessages["invalidNameFormat"])
-		}
-
-		if len(name) > 128 {
-			return false, fmt.Errorf(errorMessages["invalidNameFormat"])
-		}
-
-		return true, nil
-	}
-}
-
 func ValidatePolicyDocument(policyDocument PolicyDocument) (bool, error) {
 	if policyDocument.Version == "" {
 		return false, fmt.Errorf(errorMessages["emptyVersion"])
@@ -70,23 +45,6 @@ func ValidatePolicyDocument(policyDocument PolicyDocument) (bool, error) {
 
 	if result, err := ValidateVersion(policyDocument.Version); err != nil {
 		return result, err
-	}
-	return true, nil
-}
-
-func ValidateVersion(version interface{}) (bool, error) {
-	versionStr, ok := version.(string)
-
-	if !ok || versionStr == "" {
-		return false, fmt.Errorf(errorMessages["emptyVersion"])
-	}
-
-	if reflect.TypeOf(version).Kind() != reflect.String {
-		return false, fmt.Errorf(errorMessages["invalidVersionType"])
-	}
-
-	if versionStr != "2012-10-17" && versionStr != "2008-10-17" {
-		return false, fmt.Errorf(errorMessages["invalidVersionType"])
 	}
 	return true, nil
 }
@@ -128,6 +86,48 @@ func ValidateStatement(statement Statement) (bool, error) {
 		}
 	}
 
+	return true, nil
+}
+
+func ValidatePolicyName(name string) (bool, error) {
+	if name == "" {
+		return false, fmt.Errorf(errorMessages["emptyName"])
+	} else {
+		if reflect.TypeOf(name).Kind() != reflect.String {
+			return false, fmt.Errorf(errorMessages["invalidNameType"])
+		}
+
+		matched, err := regexp.MatchString(`^[\w+=,.@-]+$`, name)
+		if err != nil {
+			return false, fmt.Errorf("error while matching PolicyName: %v", err)
+		}
+
+		if !matched {
+			return false, fmt.Errorf(errorMessages["invalidNameFormat"])
+		}
+
+		if len(name) > 128 {
+			return false, fmt.Errorf(errorMessages["invalidNameFormat"])
+		}
+
+		return true, nil
+	}
+}
+
+func ValidateVersion(version interface{}) (bool, error) {
+	versionStr, ok := version.(string)
+
+	if !ok || versionStr == "" {
+		return false, fmt.Errorf(errorMessages["emptyVersion"])
+	}
+
+	if reflect.TypeOf(version).Kind() != reflect.String {
+		return false, fmt.Errorf(errorMessages["invalidVersionType"])
+	}
+
+	if versionStr != "2012-10-17" && versionStr != "2008-10-17" {
+		return false, fmt.Errorf(errorMessages["invalidVersionType"])
+	}
 	return true, nil
 }
 

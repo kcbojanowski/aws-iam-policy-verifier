@@ -5,58 +5,69 @@ import (
 	"github.com/kcbojanowski/aws-iam-policy-verifier/pkg/validator"
 	"github.com/manifoldco/promptui"
 	"io/fs"
-	"os"
 	"path/filepath"
+
 	"strings"
 )
 
 func main() {
-	prompt := promptui.Select{
-		Label: "Select Mode",
-		Items: []string{"Test with internal data", "Input your own JSON file"},
-	}
-
-	_, result, err := prompt.Run()
-
+	mode, err := selectMode()
 	if err != nil {
 		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
 
-	switch result {
+	switch mode {
 	case "Test with internal data":
-		testdataPath := "./tests/test-data"
-		err := filepath.Walk(testdataPath, func(path string, info fs.FileInfo, err error) error {
-			if err != nil {
-				fmt.Println("Error accessing path:", path, "error:", err)
-				return err
-			}
-			if !info.IsDir() && strings.HasSuffix(info.Name(), ".json") {
-				fmt.Printf("\n--- Testing %s:\n", info.Name())
-				valid, err := validator.ValidatePolicyJson(path)
-				if err != nil || !valid {
-					fmt.Printf("Validation failed for %s: %s\n", path, err)
-				}
-			}
-			return nil
-		})
-		if err != nil {
-			fmt.Println("Error walking through test data directory:", err)
-			os.Exit(1)
-		}
-
+		validateInternalData("./tests/test_data")
 	case "Input your own JSON file":
-		prompt := promptui.Prompt{
-			Label: "Enter path to the JSON file",
-		}
-		filePath, err := prompt.Run()
+		validateUserFile()
+	}
+}
+
+func selectMode() (string, error) {
+	prompt := promptui.Select{
+		Label: "Select Mode",
+		Items: []string{"Test with internal data", "Input your own JSON file"},
+	}
+	_, result, err := prompt.Run()
+	return result, err
+}
+
+func validateInternalData(testdataPath string) {
+	err := filepath.Walk(testdataPath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
-			fmt.Printf("Prompt failed %v\n", err)
-			return
+			fmt.Println("Error accessing path:", path, "error:", err)
+			return err
 		}
-		valid, err := validator.ValidatePolicyJson(filePath)
-		if err != nil || !valid {
-			fmt.Printf("Validation failed for %s: %s\n", filePath, err)
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".json") {
+			fmt.Printf("\n--- Testing %s:\n", info.Name())
+			validateFile(path)
 		}
+		return nil
+	})
+	if err != nil {
+		fmt.Println("Error walking through test data directory:", err)
+	}
+}
+
+func validateUserFile() {
+	prompt := promptui.Prompt{
+		Label: "Enter path to the JSON file",
+	}
+	filePath, err := prompt.Run()
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+	validateFile(filePath)
+}
+
+func validateFile(filePath string) {
+	valid, err := validator.ValidatePolicyJson(filePath)
+	if err != nil || !valid {
+		fmt.Printf("Validation failed for %s: %s\n", filePath, err)
+	} else {
+		fmt.Printf("Validation successful for %s\n", filePath)
 	}
 }
