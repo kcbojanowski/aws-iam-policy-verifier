@@ -270,7 +270,9 @@ func TestValidateStatement(t *testing.T) {
 	}
 }
 
-// Helper functions
+/*
+Helper functions
+*/
 func checkTestResult(t *testing.T, name string, expected bool, errMsg string, result bool, err error) {
 	if result != expected {
 		t.Errorf("%s: expected result %v, got %v", name, expected, result)

@@ -12,31 +12,6 @@ import (
 	"testing"
 )
 
-// helper function to generate response from the server
-func generateResponse(t *testing.T, server *httptest.Server, filePath, expectedErr string) (api.PolicyResponse, int) {
-	data, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		t.Fatalf("Failed to read test file %s: %v", filePath, err)
-	}
-
-	resp, err := http.Post(server.URL+"/validate", "application/json", bytes.NewReader(data))
-	if err != nil {
-		t.Fatalf("Failed to send POST request: %v", err)
-	}
-	defer resp.Body.Close()
-
-	var gotResponse api.PolicyResponse
-	if err := json.NewDecoder(resp.Body).Decode(&gotResponse); err != nil {
-		t.Fatalf("Failed to decode response body: %v", err)
-	}
-
-	if gotResponse.Error != expectedErr {
-		t.Errorf("Expected error message %q; got %q for %s", expectedErr, gotResponse.Error, filePath)
-	}
-
-	return gotResponse, resp.StatusCode
-}
-
 func TestEmptyFieldsSuite(t *testing.T) {
 	var server = httptest.NewServer(http.HandlerFunc(api.ValidateIAMPolicyHandler))
 	defer server.Close()
@@ -119,4 +94,29 @@ func TestValidFormatSuite(t *testing.T) {
 			}
 		})
 	}
+}
+
+// helper function to generate response from the server
+func generateResponse(t *testing.T, server *httptest.Server, filePath, expectedErr string) (api.PolicyResponse, int) {
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		t.Fatalf("Failed to read test file %s: %v", filePath, err)
+	}
+
+	resp, err := http.Post(server.URL+"/validate", "application/json", bytes.NewReader(data))
+	if err != nil {
+		t.Fatalf("Failed to send POST request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	var gotResponse api.PolicyResponse
+	if err := json.NewDecoder(resp.Body).Decode(&gotResponse); err != nil {
+		t.Fatalf("Failed to decode response body: %v", err)
+	}
+
+	if gotResponse.Error != expectedErr {
+		t.Errorf("Expected error message %q; got %q for %s", expectedErr, gotResponse.Error, filePath)
+	}
+
+	return gotResponse, resp.StatusCode
 }

@@ -40,7 +40,7 @@ To validate an IAM policy, make a POST request to `/validate` with a JSON body c
 
 **Example curl command:**
 ```
-bash curl -X POST -H "Content-Type: application/json" -d @example)policy.json http://localhost:8080/validate
+bash curl -X POST -H "Content-Type: application/json" -d @example_policy.json http://localhost:8080/validate
 ```
 Replace your_policy.json with the path to the JSON file containing your IAM policy.
 

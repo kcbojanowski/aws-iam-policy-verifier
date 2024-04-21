@@ -54,8 +54,10 @@ You can now navigate using arrows to:
 The validation is based on **[Documentation provided by AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements.html)**.
 
 ## Testing
-To run tests, use the following command:
-`go test ./...`
+To run all 36 tests, use the following command:
+```bash
+ go test github.com/kcbojanowski/aws-iam-policy-verifier/tests/unit_tests
+ ```
 or test in in CLI using test data:\
 ![img.png](static/internal.png)
 

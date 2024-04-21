@@ -23,7 +23,6 @@ var errorMessages = map[string]string{
 	"wildcardResource":    "Resource is a wildcard",
 
 	"emptyStatement": "At least one Statement is required",
-	"unwantedField":  "json: unknown field \"UnwantedField\"",
 }
 
 func GetErrorMessage(key string) string {
