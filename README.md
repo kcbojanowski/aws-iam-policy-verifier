@@ -1,5 +1,4 @@
 # AWS IAM Role Policy JSON Verifier
-Project created as a part of the Remitly Poland interview process.
 
 A tool for verifying AWS IAM Role Policy JSON structures. The project provides a simple, interactive command-line interface for validating JSON files against the AWS IAM Role Policy JSON structure.
 Additionally, it introduce an endpoint, which can be used to validate JSON via HTTP POST requests.
